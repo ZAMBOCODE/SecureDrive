@@ -5,6 +5,15 @@
   <meta charset="utf-8" />
   <meta content="width=device-width, initial-scale=1.0" name="viewport" />
   <title>SecureDrive — Protection in Motion</title>
+
+  <!-- Open Graph Meta Tags for Social Previews (WhatsApp, Telegram, etc.) -->
+  <meta property="og:title" content="SecureDrive — Protection in Motion" />
+  <meta property="og:description"
+    content="Military-grade security for diplomats, executives, and high-profile individuals across the Emirates." />
+  <meta property="og:image" content="https://www.securedrive.ae/Images/logo.jpg" />
+  <meta property="og:url" content="https://www.securedrive.ae" />
+  <meta property="og:type" content="website" />
+
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   <link
     href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=DM+Sans:wght@300;400;500;700&display=swap"
@@ -208,7 +217,7 @@
       <p class="text-[11px] uppercase tracking-[0.6em] text-primary mb-8 font-medium animate-fade-in-up"
         style="animation-delay: 0.2s; opacity: 0;" data-i18n="hero_tag">Dubai &middot; Armored &middot; Elite</p>
       <h1
-        class="serif-title text-5xl md:text-8xl lg:text-9xl font-light leading-[1.05] mb-8 tracking-tight text-white text-glow animate-fade-in-up"
+        class="serif-title text-[clamp(4.5rem,10vw,9rem)] font-light leading-[1] mb-8 tracking-tight text-white text-glow animate-fade-in-up"
         style="animation-delay: 0.4s; opacity: 0;">
         <span data-i18n="hero_title_1">Protection</span><br /><span class="italic text-slate-300 font-normal"
           data-i18n="hero_title_2">in Motion.</span>
@@ -220,7 +229,7 @@
       </p>
 
       <!-- Services on Hero -->
-      <div class="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-3xl mx-auto mb-14 animate-fade-in-up"
+      <div class="hidden md:grid grid-cols-2 lg:grid-cols-3 gap-4 max-w-3xl mx-auto mb-14 animate-fade-in-up"
         style="animation-delay: 0.8s; opacity: 0;">
         <div class="glassmorphism px-4 py-3 text-center">
           <span class="material-symbols-outlined text-primary text-lg mb-1 block">shield</span>
@@ -548,6 +557,49 @@
           </div>
         </div>
       </div>
+
+      <!-- Critical Systems Integration (Oxygen & Fire Suppression) -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-px bg-white/5 mt-px border-x border-b border-white/5">
+        <!-- Fresh Air System -->
+        <div class="bg-surface group relative h-[450px] overflow-hidden p-8 flex flex-col justify-end">
+          <div
+            class="absolute inset-0 bg-cover bg-center transition-transform duration-[2s] ease-out group-hover:scale-105 opacity-50 group-hover:opacity-70 mix-blend-luminosity"
+            style="background-image: url('Images/image-34.jpg'); box-shadow: inset 0 -150px 100px -50px #050505;"></div>
+          <div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/60 to-transparent opacity-90">
+          </div>
+          <div class="relative z-10 translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+            <div class="w-10 h-px bg-primary mb-6 transition-all duration-500 group-hover:w-20"></div>
+            <span class="text-[10px] uppercase tracking-[0.3em] text-primary mb-3 block font-medium">Life Support
+              Systems</span>
+            <h4 class="text-white serif-title text-3xl font-light mb-4">Emergency Fresh Air</h4>
+            <p
+              class="text-slate-400 text-sm font-light max-w-sm leading-relaxed opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">
+              Integrated overarching hermetic sealing with emergency oxygen supply ensuring a clean breathing atmosphere
+              regardless of external irritants or gas attacks.</p>
+          </div>
+        </div>
+
+        <!-- Fire Suppression -->
+        <div class="bg-surface group relative h-[450px] overflow-hidden p-8 flex flex-col justify-end">
+          <div
+            class="absolute inset-0 bg-cover bg-center transition-transform duration-[2s] ease-out group-hover:scale-105 opacity-50 group-hover:opacity-70 mix-blend-luminosity"
+            style="background-image: url('Images/WhatsApp Image 2026-03-02 at 20.10.27.jpeg'); box-shadow: inset 0 -150px 100px -50px #050505;">
+          </div>
+          <div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/60 to-transparent opacity-90">
+          </div>
+          <div class="relative z-10 translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+            <div class="w-10 h-px bg-primary mb-6 transition-all duration-500 group-hover:w-20"></div>
+            <span class="text-[10px] uppercase tracking-[0.3em] text-primary mb-3 block font-medium">Active
+              Countermeasures</span>
+            <h4 class="text-white serif-title text-3xl font-light mb-4">Self-Extinguishing Protocol</h4>
+            <p
+              class="text-slate-400 text-sm font-light max-w-sm leading-relaxed opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">
+              Automated multi-point fire suppression systems protecting the undercarriage, engine bay, and fuel tank
+              instantly upon thermal or explosive detection.</p>
+          </div>
+        </div>
+      </div>
+
     </div>
   </section>
 
@@ -714,7 +766,7 @@
           </div>
         </div>
 
-        <form class="space-y-8" onsubmit="event.preventDefault()">
+        <form class="space-y-8" id="contactForm" onsubmit="handleContactSubmit(event)">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div class="space-y-3">
               <label class="block text-[10px] uppercase tracking-[0.1em] text-slate-400 font-medium" for="name"
@@ -733,15 +785,6 @@
           </div>
 
           <div class="space-y-3">
-            <label class="block text-[10px] uppercase tracking-[0.1em] text-slate-400 font-medium" for="phone"
-              data-i18n="ct_phone">Phone /
-              WhatsApp</label>
-            <input
-              class="w-full bg-[#050505] border border-white/10 p-4 text-sm focus:ring-1 focus:ring-[#c2a358] focus:border-[#c2a358] transition-colors text-white placeholder-transparent"
-              id="phone" type="text" />
-          </div>
-
-          <div class="space-y-3">
             <label class="block text-[10px] uppercase tracking-[0.1em] text-slate-400 font-medium" for="message"
               data-i18n="ct_msg">Message</label>
             <textarea
@@ -755,20 +798,20 @@
               Method</label>
             <div class="flex flex-col sm:flex-row gap-6">
               <label class="flex items-center gap-3 cursor-pointer group">
-                <input type="radio" name="contact-method"
+                <input type="radio" name="contact-method" value="email"
                   class="form-radio text-[#c2a358] bg-transparent border-white/20 focus:ring-[#c2a358] focus:ring-offset-0 w-4 h-4"
                   checked>
                 <span class="text-sm text-slate-400 group-hover:text-white transition-colors">Email</span>
               </label>
               <label class="flex items-center gap-3 cursor-pointer group">
-                <input type="radio" name="contact-method"
+                <input type="radio" name="contact-method" value="whatsapp"
                   class="form-radio text-[#c2a358] bg-transparent border-white/20 focus:ring-[#c2a358] focus:ring-offset-0 w-4 h-4">
                 <span class="text-sm text-slate-400 group-hover:text-white transition-colors">WhatsApp</span>
               </label>
               <label class="flex items-center gap-3 cursor-pointer group">
-                <input type="radio" name="contact-method"
+                <input type="radio" name="contact-method" value="telegram"
                   class="form-radio text-[#c2a358] bg-transparent border-white/20 focus:ring-[#c2a358] focus:ring-offset-0 w-4 h-4">
-                <span class="text-sm text-slate-400 group-hover:text-white transition-colors">Phone</span>
+                <span class="text-sm text-slate-400 group-hover:text-white transition-colors">Telegram</span>
               </label>
             </div>
           </div>
@@ -953,7 +996,7 @@
         ws4: "Public Figures", ws4d: "VIPs requiring absolute discretion",
         ws_comp: "International Compliance", ws_comp_d: "All operations adhere to international security standards and UAE federal regulations for armored transport and executive protection.",
         ct_title: "Initiate Secure Contact",
-        ct_name: "Name", ct_email: "Email", ct_phone: "Phone / WhatsApp", ct_msg: "Message",
+        ct_name: "Name", ct_email: "Email", ct_msg: "Message",
         ct_pref: "Preferred Contact Method", ct_submit: "Send Secure Inquiry", ct_enc: "Encrypted and confidential.",
         ft_desc: "Armored Transportation & Executive Protection · Dubai, UAE",
         ft_nav: "Navigation", ft_ops: "Operations", ft_copy: "© 2026 SECUREDRIVE · All Rights Reserved."
@@ -1000,7 +1043,7 @@
         ws4: "Persönlichkeiten", ws4d: "VIPs mit höchstem Diskretionsbedarf",
         ws_comp: "Internationale Compliance", ws_comp_d: "Alle Einsätze entsprechen internationalen Sicherheitsstandards und den Bundesvorschriften der VAE.",
         ct_title: "Sicheren Kontakt aufnehmen",
-        ct_name: "Name", ct_email: "E-Mail", ct_phone: "Telefon / WhatsApp", ct_msg: "Nachricht",
+        ct_name: "Name", ct_email: "E-Mail", ct_msg: "Nachricht",
         ct_pref: "Bevorzugte Kontaktmethode", ct_submit: "Sichere Anfrage senden", ct_enc: "Verschlüsselt und vertraulich.",
         ft_desc: "Gepanzerter Transport & Personenschutz · Dubai, VAE",
         ft_nav: "Navigation", ft_ops: "Standorte", ft_copy: "© 2026 SECUREDRIVE · Alle Rechte vorbehalten."
@@ -1047,7 +1090,7 @@
         ws4: "الشخصيات العامة", ws4d: "كبار الشخصيات الذين يحتاجون سرية مطلقة",
         ws_comp: "الامتثال الدولي", ws_comp_d: "جميع العمليات تتوافق مع معايير الأمن الدولية ولوائح الإمارات الاتحادية.",
         ct_title: "ابدأ تواصلاً آمناً",
-        ct_name: "الاسم", ct_email: "البريد الإلكتروني", ct_phone: "الهاتف / واتساب", ct_msg: "الرسالة",
+        ct_name: "الاسم", ct_email: "البريد الإلكتروني", ct_msg: "الرسالة",
         ct_pref: "طريقة الاتصال المفضلة", ct_submit: "إرسال استفسار آمن", ct_enc: "مشفر وسري.",
         ft_desc: "نقل مدرّع وحماية تنفيذية · دبي، الإمارات",
         ft_nav: "التنقل", ft_ops: "العمليات", ft_copy: "© 2026 SECUREDRIVE · جميع الحقوق محفوظة."
@@ -1094,7 +1137,7 @@
         ws4: "Публичные фигуры", ws4d: "VIP-персоны, требующие абсолютной конфиденциальности",
         ws_comp: "Международное соответствие", ws_comp_d: "Все операции соответствуют международным стандартам безопасности и федеральным нормам ОАЭ.",
         ct_title: "Инициировать безопасный контакт",
-        ct_name: "Имя", ct_email: "Email", ct_phone: "Телефон / WhatsApp", ct_msg: "Сообщение",
+        ct_name: "Имя", ct_email: "Email", ct_msg: "Сообщение",
         ct_pref: "Предпочтительный способ связи", ct_submit: "Отправить защищённый запрос", ct_enc: "Зашифровано и конфиденциально.",
         ft_desc: "Бронированный транспорт и защита · Дубай, ОАЭ",
         ft_nav: "Навигация", ft_ops: "Операции", ft_copy: "© 2026 SECUREDRIVE · Все права защищены."
@@ -1161,6 +1204,30 @@
         navbar.classList.remove('glassmorphism', 'py-3');
       }
     });
+
+    // Contact form submit handler
+    function handleContactSubmit(e) {
+      e.preventDefault();
+      var name = document.getElementById('name').value.trim();
+      var email = document.getElementById('email').value.trim();
+      var message = document.getElementById('message').value.trim();
+      var method = document.querySelector('input[name="contact-method"]:checked').value;
+
+      var text = '';
+      if (name) text += 'Name: ' + name + '\n';
+      if (email) text += 'Email: ' + email + '\n';
+      if (message) text += 'Message: ' + message;
+      var encoded = encodeURIComponent(text.trim());
+
+      if (method === 'whatsapp') {
+        // TODO: Replace with actual WhatsApp link
+        window.open('https://wa.me/REPLACE_NUMBER?text=' + encoded, '_blank');
+      } else if (method === 'telegram') {
+        window.open('https://t.me/yourusername', '_blank');
+      } else {
+        window.location.href = 'mailto:info@securedrive.ae?subject=Secure%20Inquiry&body=' + encoded;
+      }
+    }
   </script>
 </body>
 
