@@ -875,7 +875,7 @@
 
   <script>
     // Auto-scroll logic for mobile services section
-    document.addEventListener("DOMContentLoaded", () => 
+    document.addEventListener("DOMContentLoaded", () => {
       const scrollContainer = document.getElementById("services-scroll");
       if (!scrollContainer) return;
 
@@ -893,7 +893,8 @@
             }, 1000);
           }
         }
-        requestAnimationFrame(autcro    }
+        requestAnimationFrame(autoScroll);
+      }
 
       scrollContainer.addEventListener('mouseenter', () => isHovering = true);
       scrollContainer.addEventListener('mouseleave', () => isHovering = false);
