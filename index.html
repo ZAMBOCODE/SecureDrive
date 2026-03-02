@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>SecureDrive — Protection in Motion</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=DM+Sans:wght@300;400;500;700&display=swap"
+    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+    rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#d4af37",
+            "primary-dark": "#b08d28",
+            "background-light": "#f8f7f6",
+            "background-dark": "#050505",
+            "surface": "#121212",
+          },
+          fontFamily: {
+            "display": ["Cormorant Garamond", "serif"],
+            "body": ["DM Sans", "sans-serif"]
+          },
+          animation: {
+            'fade-in-up': 'fadeInUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+            'slow-pan': 'panImage 40s linear infinite alternate',
+            'marquee': 'marquee 40s linear infinite',
+            'marquee-reverse': 'marquee-reverse 50s linear infinite',
+          },
+          keyframes: {
+            fadeInUp: {
+              '0%': { opacity: '0', transform: 'translateY(30px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+            },
+            panImage: {
+              '0%': { transform: 'scale(1.05) translate(0, 0)' },
+              '100%': { transform: 'scale(1.15) translate(-2%, -2%)' },
+            },
+            marquee: {
+              '0%': { transform: 'translateX(0%)' },
+              '100%': { transform: 'translateX(-50%)' },
+            },
+            'marquee-reverse': {
+              '0%': { transform: 'translateX(-50%)' },
+              '100%': { transform: 'translateX(0%)' },
+            }
+          }
+        },
+      },
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background-color: #050505;
+      color: #f1f5f9;
+      overflow-x: hidden;
+    }
+
+    /* Clean scrollbar for mobile sections */
+    .hide-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .hide-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    .serif-title {
+      font-family: 'Cormorant Garamond', serif;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px) scale(0.98);
+      filter: blur(4px);
+      transition: all 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .reveal.active {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      filter: blur(0);
+    }
+
+    .glassmorphism {
+      background: rgba(10, 10, 10, 0.6);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .text-glow {
+      text-shadow: 0 0 30px rgba(212, 175, 55, 0.15);
+    }
+
+    /* Language Switcher */
+    .lang-fab {
+      position: fixed;
+      bottom: 24px;
+      left: 24px;
+      z-index: 999;
+    }
+
+    .lang-fab-menu {
+      display: none;
+      position: absolute;
+      bottom: 56px;
+      left: 0;
+      background: rgba(10, 10, 10, 0.95);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      min-width: 140px;
+    }
+
+    .lang-fab.open .lang-fab-menu {
+      display: block;
+    }
+
+    .lang-opt {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      cursor: pointer;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      transition: background 0.2s;
+      color: #cbd5e1;
+    }
+
+    .lang-opt:hover {
+      background: rgba(212, 175, 55, 0.1);
+    }
+
+    .lang-opt.active {
+      color: #d4af37;
+    }
+
+    /* Discover bounce animation */
+    @keyframes discoverBounce {
+
+      0%,
+      20%,
+      50%,
+      80%,
+      100% {
+        transform: translateY(0) translateX(-50%);
+      }
+
+      40% {
+        transform: translateY(-12px) translateX(-50%);
+      }
+
+      60% {
+        transform: translateY(-6px) translateX(-50%);
+      }
+    }
+
+    .discover-animated {
+      animation: discoverBounce 2.5s infinite;
+    }
+  </style>
+</head>
+
+<body class="selection:bg-primary selection:text-background-dark antialiased">
+
+  <!-- Navigation -->
+  <nav class="fixed top-0 left-0 w-full z-50 transition-all duration-500 bg-transparent border-b border-white/5 py-4"
+    id="navbar">
+    <div class="max-w-[1400px] mx-auto px-4 md:px-6 h-16 flex items-center justify-between">
+      <div class="flex items-center">
+        <h1 class="serif-title text-2xl font-light tracking-[0.25em] uppercase text-white">SECUREDRIVE</h1>
+      </div>
+      <div class="hidden md:flex items-center gap-10">
+        <a class="text-[10px] uppercase tracking-[0.3em] text-slate-300 hover:text-primary transition-colors duration-300"
+          href="#services" data-i18n="nav_services">Services</a>
+        <a class="text-[10px] uppercase tracking-[0.3em] text-slate-300 hover:text-primary transition-colors duration-300"
+          href="#fleet" data-i18n="nav_fleet">Our Fleet</a>
+        <a class="text-[10px] uppercase tracking-[0.3em] text-slate-300 hover:text-primary transition-colors duration-300"
+          href="#contact" data-i18n="nav_contact">Contact</a>
+        <a href="#contact"
+          class="inline-block border border-primary bg-primary text-black px-8 py-3 text-[10px] uppercase tracking-[0.2em] font-medium hover:bg-white hover:border-white transition-all duration-300"
+          data-i18n="nav_cta">
+          Initiate Contact
+        </a>
+      </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <header
+    class="relative min-h-screen flex flex-col items-center justify-center text-center px-4 overflow-hidden pb-24">
+    <!-- Hero Background Image - image-01 -->
+    <div class="absolute inset-0 z-0 overflow-hidden bg-black">
+      <div class="w-full h-full bg-cover bg-center animate-slow-pan opacity-70"
+        style="background-image: url('Images/image-01.jpg');"></div>
+      <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-black/30 to-[#050505]"></div>
+    </div>
+
+    <div class="relative z-10 max-w-5xl mt-16">
+      <p class="text-[11px] uppercase tracking-[0.6em] text-primary mb-8 font-medium animate-fade-in-up"
+        style="animation-delay: 0.2s; opacity: 0;" data-i18n="hero_tag">Dubai &middot; Armored &middot; Elite</p>
+      <h1
+        class="serif-title text-5xl md:text-8xl lg:text-9xl font-light leading-[1.05] mb-8 tracking-tight text-white text-glow animate-fade-in-up"
+        style="animation-delay: 0.4s; opacity: 0;">
+        <span data-i18n="hero_title_1">Protection</span><br /><span class="italic text-slate-300 font-normal"
+          data-i18n="hero_title_2">in Motion.</span>
+      </h1>
+      <p class="text-slate-300 max-w-[520px] mx-auto mb-12 text-sm md:text-base leading-relaxed tracking-wide font-light animate-fade-in-up"
+        style="animation-delay: 0.6s; opacity: 0;" data-i18n="hero_desc">
+        Military-grade security for diplomats, executives, and high-profile individuals across the Emirates. The only
+        provider of armored public transfer vehicles in the region.
+      </p>
+
+      <!-- Services on Hero -->
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-3xl mx-auto mb-14 animate-fade-in-up"
+        style="animation-delay: 0.8s; opacity: 0;">
+        <div class="glassmorphism px-4 py-3 text-center">
+          <span class="material-symbols-outlined text-primary text-lg mb-1 block">shield</span>
+          <p class="text-[9px] uppercase tracking-[0.2em] text-slate-200" data-i18n="hs1">Armored VIP Transfers</p>
+        </div>
+        <div class="glassmorphism px-4 py-3 text-center">
+          <span class="material-symbols-outlined text-primary text-lg mb-1 block">flight</span>
+          <p class="text-[9px] uppercase tracking-[0.2em] text-slate-200" data-i18n="hs2">Airport Transfers</p>
+        </div>
+        <div class="glassmorphism px-4 py-3 text-center">
+          <span class="material-symbols-outlined text-primary text-lg mb-1 block">business_center</span>
+          <p class="text-[9px] uppercase tracking-[0.2em] text-slate-200" data-i18n="hs3">Business Travel</p>
+        </div>
+        <div class="glassmorphism px-4 py-3 text-center">
+          <span class="material-symbols-outlined text-primary text-lg mb-1 block">event</span>
+          <p class="text-[9px] uppercase tracking-[0.2em] text-slate-200" data-i18n="hs4">Event &amp; Conference</p>
+        </div>
+        <div class="glassmorphism px-4 py-3 text-center">
+          <span class="material-symbols-outlined text-primary text-lg mb-1 block">route</span>
+          <p class="text-[9px] uppercase tracking-[0.2em] text-slate-200" data-i18n="hs5">Individual Route Planning</p>
+        </div>
+        <div class="glassmorphism px-4 py-3 text-center">
+          <span class="material-symbols-outlined text-primary text-lg mb-1 block">lock</span>
+          <p class="text-[9px] uppercase tracking-[0.2em] text-slate-200" data-i18n="hs6">Document &amp; Asset Transport
+          </p>
+        </div>
+      </div>
+
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-6 animate-fade-in-up"
+        style="animation-delay: 1s; opacity: 0;">
+        <a href="#contact"
+          class="bg-primary text-black px-12 py-4 text-[10px] uppercase tracking-[0.3em] font-medium hover:bg-white transition-all duration-300">
+          <span data-i18n="hero_btn1">Initiate Contact</span>
+        </a>
+        <a href="#fleet"
+          class="text-[10px] uppercase tracking-[0.3em] flex items-center gap-3 group text-white hover:text-primary transition-colors">
+          <span data-i18n="hero_btn2">View Fleet</span> <span
+            class="material-symbols-outlined text-sm group-hover:translate-x-2 transition-transform duration-300">arrow_right_alt</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="absolute bottom-10 left-1/2 discover-animated flex flex-col items-center gap-4 animate-fade-in-up"
+      style="animation-delay: 1.4s; opacity: 0;">
+      <span class="text-[8px] uppercase tracking-[0.4em] text-primary/80">Discover</span>
+      <span class="material-symbols-outlined text-primary/60 text-lg">keyboard_double_arrow_down</span>
+    </div>
+  </header>
+
+  <!-- Service Protocols -->
+  <section id="services" class="py-32 px-6 relative z-10 bg-[#050505]">
+    <div class="max-w-[1400px] mx-auto">
+      <div class="mb-24 text-center reveal">
+        <h2 class="serif-title text-4xl md:text-5xl font-light mb-6 text-white text-glow" data-i18n="sec_title">
+          Strategic Capabilities</h2>
+        <div class="h-px w-16 bg-primary mx-auto mb-6"></div>
+        <p class="text-slate-400 text-xs font-light uppercase tracking-[0.3em]" data-i18n="sec_sub">Tactical &amp;
+          Diplomatic Protocols</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-1 hidden"></div>
+
+      <!-- Horizontal Scroll Context for Mobile, Grid on Desktop -->
+      <div id="services-scroll"
+        class="flex md:grid md:grid-cols-2 lg:grid-cols-3 gap-1 overflow-x-auto hide-scrollbar snap-x snap-mandatory md:snap-none w-full md:overflow-visible relative">
+        <!-- Service 1 -->
+        <div
+          class="group relative h-[450px] md:h-[500px] min-w-[85vw] sm:min-w-[60vw] md:min-w-0 flex-none snap-center overflow-hidden reveal bg-background-dark">
+          <div
+            class="absolute inset-0 bg-cover bg-center transition-transform duration-[1.5s] ease-out group-hover:scale-105 opacity-50 group-hover:opacity-70"
+            style="background-image: url('Images/image-01.jpg');"></div>
+          <div class="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent"></div>
+          <div class="absolute inset-0 p-12 flex flex-col justify-end">
+            <div class="translate-y-6 group-hover:translate-y-0 transition-transform duration-500 ease-out">
+              <p class="text-[9px] text-primary tracking-[0.3em] uppercase mb-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100"
+                data-i18n="p01">
+                Protocol 01</p>
+              <h3 class="serif-title text-3xl font-light mb-4 text-white" data-i18n="s1t">Armored VIP <br>Transfers</h3>
+              <div
+                class="h-0 opacity-0 group-hover:h-auto group-hover:opacity-100 transition-all duration-500 overflow-hidden">
+                <p class="text-slate-300 text-sm font-light leading-relaxed mt-2" data-i18n="s1d">Secure point-to-point
+                  transit in
+                  ballistic-protected luxury sedans and SUVs, ensuring absolute sterile travel environments.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Service 2 -->
+        <div
+          class="group relative h-[450px] md:h-[500px] min-w-[85vw] sm:min-w-[60vw] md:min-w-0 flex-none snap-center overflow-hidden reveal bg-background-dark"
+          style="transition-delay: 100ms;">
+          <div
+            class="absolute inset-0 bg-cover bg-center transition-transform duration-[1.5s] ease-out group-hover:scale-105 opacity-50 group-hover:opacity-70"
+            style="background-image: url('Images/image-02.jpg');"></div>
+          <div class="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent"></div>
+          <div class="absolute inset-0 p-12 flex flex-col justify-end">
+            <div class="translate-y-6 group-hover:translate-y-0 transition-transform duration-500 ease-out">
+              <p class="text-[9px] text-primary tracking-[0.3em] uppercase mb-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100"
+                data-i18n="p02">
+                Protocol 02</p>
+              <h3 class="serif-title text-3xl font-light mb-4 text-white" data-i18n="s2t">High-Stakes <br>Business
+                Travel</h3>
+              <div
+                class="h-0 opacity-0 group-hover:h-auto group-hover:opacity-100 transition-all duration-500 overflow-hidden">
+                <p class="text-slate-300 text-sm font-light leading-relaxed mt-2" data-i18n="s2d">Armed escort and
+                  secure transport for
+                  corporate engagements requiring heightened risk mitigation.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Service 3 -->
+        <div
+          class="group relative h-[450px] md:h-[500px] min-w-[85vw] sm:min-w-[60vw] md:min-w-0 flex-none snap-center overflow-hidden reveal bg-background-dark"
+          style="transition-delay: 200ms;">
+          <div
+            class="absolute inset-0 bg-cover bg-center transition-transform duration-[1.5s] ease-out group-hover:scale-105 opacity-50 group-hover:opacity-70"
+            style="background-image: url('Images/image-03.jpg');"></div>
+          <div class="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent"></div>
+          <div class="absolute inset-0 p-12 flex flex-col justify-end">
+            <div class="translate-y-6 group-hover:translate-y-0 transition-transform duration-500 ease-out">
+              <p class="text-[9px] text-primary tracking-[0.3em] uppercase mb-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100"
+                data-i18n="p03">
+                Protocol 03</p>
+              <h3 class="serif-title text-3xl font-light mb-4 text-white" data-i18n="s3t">Diplomatic <br>Protection</h3>
+              <div
+                class="h-0 opacity-0 group-hover:h-auto group-hover:opacity-100 transition-all duration-500 overflow-hidden">
+                <p class="text-slate-300 text-sm font-light leading-relaxed mt-2" data-i18n="s3d">Embassy-compliant
+                  transport matching
+                  international standards for delegations, royals, and governmental officials.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Service 4 -->
+        <div
+          class="group relative h-[450px] md:h-[500px] min-w-[85vw] sm:min-w-[60vw] md:min-w-0 flex-none snap-center overflow-hidden reveal bg-background-dark">
+          <div
+            class="absolute inset-0 bg-cover bg-center transition-transform duration-[1.5s] ease-out group-hover:scale-105 opacity-50 group-hover:opacity-70"
+            style="background-image: url('Images/image-04.jpg');"></div>
+          <div class="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent"></div>
+          <div class="absolute inset-0 p-12 flex flex-col justify-end">
+            <div class="translate-y-6 group-hover:translate-y-0 transition-transform duration-500 ease-out">
+              <p class="text-[9px] text-primary tracking-[0.3em] uppercase mb-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100"
+                data-i18n="p04">
+                Protocol 04</p>
+              <h3 class="serif-title text-3xl font-light mb-4 text-white" data-i18n="s4t">Event <br>Logistics</h3>
+              <div
+                class="h-0 opacity-0 group-hover:h-auto group-hover:opacity-100 transition-all duration-500 overflow-hidden">
+                <p class="text-slate-300 text-sm font-light leading-relaxed mt-2" data-i18n="s4d">Coordinated arrival
+                  and extraction
+                  strategies for high-profile public and private events, integrating counter-surveillance.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Service 5 -->
+        <div
+          class="group relative h-[450px] md:h-[500px] min-w-[85vw] sm:min-w-[60vw] md:min-w-0 flex-none snap-center overflow-hidden reveal bg-background-dark"
+          style="transition-delay: 100ms;">
+          <div
+            class="absolute inset-0 bg-cover bg-center transition-transform duration-[1.5s] ease-out group-hover:scale-105 opacity-50 group-hover:opacity-70"
+            style="background-image: url('Images/image-05.jpg');"></div>
+          <div class="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent"></div>
+          <div class="absolute inset-0 p-12 flex flex-col justify-end">
+            <div class="translate-y-6 group-hover:translate-y-0 transition-transform duration-500 ease-out">
+              <p class="text-[9px] text-primary tracking-[0.3em] uppercase mb-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100"
+                data-i18n="p05">
+                Protocol 05</p>
+              <h3 class="serif-title text-3xl font-light mb-4 text-white" data-i18n="s5t">Tarmac <br>Concierge</h3>
+              <div
+                class="h-0 opacity-0 group-hover:h-auto group-hover:opacity-100 transition-all duration-500 overflow-hidden">
+                <p class="text-slate-300 text-sm font-light leading-relaxed mt-2" data-i18n="s5d">Private aviation
+                  terminal assistance
+                  allowing immediate, secure transition from air to heavily armored road assets.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Service 6 -->
+        <div
+          class="group relative h-[450px] md:h-[500px] min-w-[85vw] sm:min-w-[60vw] md:min-w-0 flex-none snap-center overflow-hidden reveal bg-background-dark"
+          style="transition-delay: 200ms;">
+          <div
+            class="absolute inset-0 bg-cover bg-center transition-transform duration-[1.5s] ease-out group-hover:scale-105 opacity-50 group-hover:opacity-70"
+            style="background-image: url('Images/image-06.jpg');"></div>
+          <div class="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent"></div>
+          <div class="absolute inset-0 p-12 flex flex-col justify-end">
+            <div class="translate-y-6 group-hover:translate-y-0 transition-transform duration-500 ease-out">
+              <p class="text-[9px] text-primary tracking-[0.3em] uppercase mb-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100"
+                data-i18n="p06">
+                Protocol 06</p>
+              <h3 class="serif-title text-3xl font-light mb-4 text-white" data-i18n="s6t">Long-term <br>Lease</h3>
+              <div
+                class="h-0 opacity-0 group-hover:h-auto group-hover:opacity-100 transition-all duration-500 overflow-hidden">
+                <p class="text-slate-300 text-sm font-light leading-relaxed mt-2" data-i18n="s6d">Dedicated armored
+                  assets with
+                  professional Close Protection chauffeur details retained for extended residency.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Fleet Showcase -->
+  <section id="fleet" class="py-32 px-6 bg-[#050505] relative border-t border-white/5">
+    <!-- Abstract pattern -->
+    <div class="absolute inset-0 opacity-[0.02] pointer-events-none"
+      style="background-image: radial-gradient(#ffffff 2px, transparent 2px); background-size: 60px 60px;"></div>
+
+    <div class="max-w-[1400px] mx-auto relative z-10">
+      <div class="flex flex-col lg:flex-row gap-16 lg:items-end mb-20 reveal">
+        <div class="lg:w-2/3">
+          <div
+            class="inline-block px-4 py-2 border border-primary/20 text-primary text-[9px] tracking-[0.3em] uppercase mb-8"
+            data-i18n="fl_badge">
+            Level 7 / VR9 Armor Configuration
+          </div>
+          <h2 class="serif-title text-5xl md:text-7xl font-light text-white text-glow mb-8 leading-[1.1]">
+            <span data-i18n="fl_h1">Inconspicuous</span><br /><span class="italic text-slate-400 font-normal"
+              data-i18n="fl_h2">Fortresses.</span>
+          </h2>
+          <p class="text-slate-400 text-sm font-light leading-relaxed max-w-xl" data-i18n="fl_desc">Our fleet is
+            engineered by leading
+            ballistic specialists in Germany and the UAE to withstand extreme threats while attracting zero attention.
+            We pair 360-degree overlap armoring with immaculate luxury styling.</p>
+        </div>
+      </div>
+
+      <!-- Fleet Lineup - Full Width Showcase -->
+      <div class="mb-1 reveal">
+        <div class="group relative w-full h-[500px] md:h-[650px] overflow-hidden bg-surface">
+          <div
+            class="w-full h-full bg-cover bg-center transition-transform duration-[2s] group-hover:scale-105 opacity-90 group-hover:opacity-100"
+            style="background-image: url('Images/fleet-lineup.jpg')"></div>
+          <div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-black/20 opacity-70"></div>
+          <div class="absolute bottom-10 left-10">
+            <p class="text-primary text-[9px] tracking-[0.4em] uppercase mb-3" data-i18n="fl_lineup_tag">Our Fleet</p>
+            <h3 class="serif-title text-4xl md:text-5xl text-white" data-i18n="fl_lineup_title">Armored Mercedes-Benz
+              S-Class Fleet</h3>
+            <p class="text-slate-300 text-sm font-light mt-3 max-w-lg" data-i18n="fl_lineup_desc">Multiple
+              ballistic-certified vehicles with blue-light authorization, ready for immediate deployment across the
+              Emirates.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- CSS Grid Fleet Display -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-1 reveal">
+        <!-- Single Mercedes Showcase -->
+        <div class="lg:col-span-8 group relative aspect-video md:aspect-auto md:h-[600px] overflow-hidden bg-surface">
+          <div
+            class="w-full h-full bg-cover bg-center transition-transform duration-1000 group-hover:scale-105 opacity-90 group-hover:opacity-100"
+            style="background-image: url('Images/fleet-single.jpg')"></div>
+          <div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent opacity-70"></div>
+          <div class="absolute bottom-10 left-10">
+            <p class="text-primary text-[9px] tracking-[0.4em] uppercase mb-3" data-i18n="fl_single_tag">Flagship Guard
+            </p>
+            <h3 class="serif-title text-4xl text-white" data-i18n="fl_single_title">Mercedes-Benz S600 Guard</h3>
+            <p class="text-slate-400 text-xs font-light mt-2" data-i18n="fl_single_sub">VR9 certified &middot; Tactical
+              escort ready</p>
+          </div>
+        </div>
+
+        <!-- Detail Side Images -->
+        <div class="lg:col-span-4 flex flex-col gap-1">
+          <div class="group relative flex-1 min-h-[298px] overflow-hidden bg-surface">
+            <div
+              class="w-full h-full bg-cover bg-center transition-transform duration-1000 group-hover:scale-105 opacity-80 group-hover:opacity-100 grayscale hover:grayscale-0"
+              style="background-image: url('Images/image-08.jpg')"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-[#050505] opacity-60"></div>
+            <p class="absolute bottom-6 left-6 text-white text-[10px] uppercase tracking-widest font-medium"
+              data-i18n="fl_int">Bespoke
+              Interior</p>
+          </div>
+          <div class="group relative flex-1 min-h-[298px] overflow-hidden bg-surface">
+            <div
+              class="w-full h-full bg-cover bg-center transition-transform duration-1000 group-hover:scale-105 opacity-80 group-hover:opacity-100 grayscale hover:grayscale-0"
+              style="background-image: url('Images/image-09.jpg')"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-[#050505] opacity-60"></div>
+            <p class="absolute bottom-6 left-6 text-white text-[10px] uppercase tracking-widest font-medium"
+              data-i18n="fl_tac">Tactical
+              Command</p>
+          </div>
+        </div>
+
+        <!-- Details Bottom Row -->
+        <div class="lg:col-span-4 group relative h-[350px] overflow-hidden bg-surface">
+          <div
+            class="w-full h-full bg-cover bg-center transition-transform duration-1000 group-hover:scale-105 opacity-70 group-hover:opacity-100"
+            style="background-image: url('Images/image-10.jpg')"></div>
+          <div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent opacity-60"></div>
+          <div class="absolute bottom-8 left-8">
+            <h4 class="text-white serif-title text-2xl mb-1" data-i18n="fl_stealth">Stealth Ops</h4>
+            <p class="text-[9px] uppercase text-primary tracking-widest" data-i18n="fl_stealth_sub">Low Profile SUVs</p>
+          </div>
+        </div>
+        <div class="lg:col-span-4 group relative h-[350px] overflow-hidden bg-surface">
+          <div
+            class="w-full h-full bg-cover bg-center transition-transform duration-1000 group-hover:scale-105 opacity-70 group-hover:opacity-100"
+            style="background-image: url('Images/image-11.jpg')"></div>
+          <div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent opacity-60"></div>
+          <div class="absolute bottom-8 left-8">
+            <h4 class="text-white serif-title text-2xl mb-1" data-i18n="fl_glass">Multi-layer Defense</h4>
+            <p class="text-[9px] uppercase text-primary tracking-widest" data-i18n="fl_glass_sub">Polycarbonate Glass
+            </p>
+          </div>
+        </div>
+        <div class="lg:col-span-4 group relative h-[350px] overflow-hidden bg-surface">
+          <div
+            class="w-full h-full bg-cover bg-center transition-transform duration-1000 group-hover:scale-105 opacity-70 group-hover:opacity-100"
+            style="background-image: url('Images/image-12.jpg')"></div>
+          <div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent opacity-60"></div>
+          <div class="absolute bottom-8 left-8">
+            <h4 class="text-white serif-title text-2xl mb-1" data-i18n="fl_convoy">Convoy Systems</h4>
+            <p class="text-[9px] uppercase text-primary tracking-widest" data-i18n="fl_convoy_sub">Escort Formations</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Vehicle Details Section -->
+  <section class="py-32 px-6 bg-[#050505] border-t border-white/5">
+    <div class="max-w-[1400px] mx-auto">
+      <div class="text-center mb-20 reveal">
+        <h2 class="serif-title text-4xl md:text-5xl font-light mb-6 text-white text-glow" data-i18n="vh_title">The
+          Vehicle</h2>
+        <div class="h-px w-16 bg-primary mx-auto mb-6"></div>
+        <p class="text-slate-400 text-sm font-light max-w-2xl mx-auto leading-relaxed" data-i18n="vh_desc">Our armored
+          fleet meets the
+          highest international protection standards. Every vehicle is engineered for maximum safety without
+          compromising on luxury or discretion.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 reveal">
+        <div class="border border-white/5 p-10">
+          <span class="material-symbols-outlined text-primary text-2xl mb-6 block">verified_user</span>
+          <h4 class="text-white text-sm uppercase tracking-[0.15em] font-medium mb-4" data-i18n="vh1t">Security
+            Standards</h4>
+          <p class="text-slate-400 text-sm font-light leading-relaxed" data-i18n="vh1d">VR9 / B7 ballistic protection.
+            Tested and
+            certified against military-grade threats including explosives and armor-piercing ammunition.</p>
+        </div>
+        <div class="border border-white/5 p-10">
+          <span class="material-symbols-outlined text-primary text-2xl mb-6 block">auto_awesome</span>
+          <h4 class="text-white text-sm uppercase tracking-[0.15em] font-medium mb-4" data-i18n="vh2t">Comfort Features
+          </h4>
+          <p class="text-slate-400 text-sm font-light leading-relaxed" data-i18n="vh2d">Exclusive Nappa leather
+            interior,
+            climate-controlled rear cabin, noise-dampened passenger compartment, and executive workspace amenities.</p>
+        </div>
+        <div class="border border-white/5 p-10">
+          <span class="material-symbols-outlined text-primary text-2xl mb-6 block">build</span>
+          <h4 class="text-white text-sm uppercase tracking-[0.15em] font-medium mb-4" data-i18n="vh3t">Maintenance</h4>
+          <p class="text-slate-400 text-sm font-light leading-relaxed" data-i18n="vh3d">Rigorous maintenance protocols
+            with certified
+            specialists. Every vehicle is inspected before and after each deployment to guarantee operational readiness.
+          </p>
+        </div>
+        <div class="border border-white/5 p-10">
+          <span class="material-symbols-outlined text-primary text-2xl mb-6 block">visibility_off</span>
+          <h4 class="text-white text-sm uppercase tracking-[0.15em] font-medium mb-4" data-i18n="vh4t">Discretion &amp;
+            Technology</h4>
+          <p class="text-slate-400 text-sm font-light leading-relaxed" data-i18n="vh4d">Self-sealing fuel tank,
+            fresh-air filtration
+            system, run-flat tires, GPS jamming countermeasures, and encrypted communication systems.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Team & Security Standards Section -->
+  <section class="py-32 px-6 bg-surface border-t border-white/5">
+    <div class="max-w-[1400px] mx-auto">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-start">
+        <!-- Team -->
+        <div class="reveal">
+          <div class="w-10 h-px bg-primary mb-8"></div>
+          <h3 class="serif-title text-4xl lg:text-5xl text-white mb-8 font-light" data-i18n="tm_title">Our Team</h3>
+          <div class="space-y-6">
+            <div class="flex gap-4 items-start">
+              <span class="material-symbols-outlined text-primary mt-0.5">military_tech</span>
+              <div>
+                <h4 class="text-white text-sm font-medium mb-2" data-i18n="tm1t">Elite Personnel</h4>
+                <p class="text-slate-400 text-sm font-light leading-relaxed" data-i18n="tm1d">All operators are former
+                  elite military and
+                  special forces with extensive background verification and security clearance.</p>
+              </div>
+            </div>
+            <div class="flex gap-4 items-start">
+              <span class="material-symbols-outlined text-primary mt-0.5">school</span>
+              <div>
+                <h4 class="text-white text-sm font-medium mb-2" data-i18n="tm2t">Defensive Driving Training</h4>
+                <p class="text-slate-400 text-sm font-light leading-relaxed" data-i18n="tm2d">Continuous advanced
+                  training in evasive
+                  maneuvers, threat response, and high-speed protective driving techniques.</p>
+              </div>
+            </div>
+            <div class="flex gap-4 items-start">
+              <span class="material-symbols-outlined text-primary mt-0.5">handshake</span>
+              <div>
+                <h4 class="text-white text-sm font-medium mb-2" data-i18n="tm3t">Licensed Security Partners</h4>
+                <p class="text-slate-400 text-sm font-light leading-relaxed" data-i18n="tm3d">Strategic cooperation with
+                  certified
+                  security firms across the UAE and the wider GCC region for comprehensive protection coverage.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Standards & Clients -->
+        <div class="reveal">
+          <div class="w-10 h-px bg-primary mb-8"></div>
+          <h3 class="serif-title text-4xl lg:text-5xl text-white mb-8 font-light" data-i18n="ws_title">Who We Serve</h3>
+          <p class="text-slate-400 text-sm font-light leading-relaxed mb-10" data-i18n="ws_desc">SecureDrive is the only
+            provider in the
+            region offering armored vehicles for public transfer. With years of experience in this exclusive segment, we
+            set the standard for discreet, high-security transportation.</p>
+          <div class="grid grid-cols-2 gap-6">
+            <div class="border-l-2 border-primary/30 pl-5">
+              <p class="text-white text-sm font-medium" data-i18n="ws1">Diplomats</p>
+              <p class="text-slate-500 text-xs font-light mt-1" data-i18n="ws1d">Embassy &amp; governmental delegations
+              </p>
+            </div>
+            <div class="border-l-2 border-primary/30 pl-5">
+              <p class="text-white text-sm font-medium" data-i18n="ws2">Executives</p>
+              <p class="text-slate-500 text-xs font-light mt-1" data-i18n="ws2d">C-suite &amp; corporate leadership</p>
+            </div>
+            <div class="border-l-2 border-primary/30 pl-5">
+              <p class="text-white text-sm font-medium" data-i18n="ws3">Business Travelers</p>
+              <p class="text-slate-500 text-xs font-light mt-1" data-i18n="ws3d">High-profile international engagements
+              </p>
+            </div>
+            <div class="border-l-2 border-primary/30 pl-5">
+              <p class="text-white text-sm font-medium" data-i18n="ws4">Public Figures</p>
+              <p class="text-slate-500 text-xs font-light mt-1" data-i18n="ws4d">VIPs requiring absolute discretion</p>
+            </div>
+          </div>
+          <div class="mt-10 p-6 border border-white/5 bg-[#0a0a0a]">
+            <p class="text-[9px] uppercase tracking-[0.3em] text-primary mb-3" data-i18n="ws_comp">International
+              Compliance</p>
+            <p class="text-slate-400 text-sm font-light leading-relaxed" data-i18n="ws_comp_d">All operations adhere to
+              international security
+              standards and UAE federal regulations for armored transport and executive protection.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Dark Atmospheric Contact Section -->
+  <section id="contact" class="relative py-32 bg-[#141414] overflow-hidden">
+    <!-- Subtle noise texture / dark background pattern -->
+    <div class="absolute inset-0 opacity-[0.03] z-0 pointer-events-none"
+      style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E');">
+    </div>
+
+    <div class="max-w-4xl mx-auto relative z-10 p-4 md:p-8 reveal">
+
+      <!-- Custom border box replicating screenshot (gold delicate corners) -->
+      <div class="relative bg-[#111111] border border-white/5 p-8 md:p-16">
+        <!-- Gold corner accents -->
+        <div class="absolute top-0 left-0 w-8 h-8 border-t border-l border-[#c8b06a]/40"></div>
+        <div class="absolute top-0 right-0 w-8 h-8 border-t border-r border-[#c8b06a]/40"></div>
+        <div class="absolute bottom-0 left-0 w-8 h-8 border-b border-l border-[#c8b06a]/40"></div>
+        <div class="absolute bottom-0 right-0 w-8 h-8 border-b border-r border-[#c8b06a]/40"></div>
+
+        <div class="text-center mb-16">
+          <h2 class="serif-title text-4xl md:text-5xl font-light text-white text-glow tracking-wide"
+            data-i18n="ct_title">Initiate Secure
+            Contact</h2>
+
+          <!-- 24/7 Availability badge -->
+          <div
+            class="mt-8 inline-flex items-center gap-2 px-4 py-2 border border-[#c2a358]/30 bg-[#c2a358]/5 rounded-full">
+            <span class="relative flex h-2 w-2">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+            </span>
+            <span class="text-[10px] sm:text-xs uppercase tracking-widest text-[#c2a358] font-medium"
+              data-i18n="ct_247">WhatsApp &amp; Telegram 24/7 Availability Guaranteed</span>
+          </div>
+        </div>
+
+        <form class="space-y-8" onsubmit="event.preventDefault()">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="space-y-3">
+              <label class="block text-[10px] uppercase tracking-[0.1em] text-slate-400 font-medium" for="name"
+                data-i18n="ct_name">Name</label>
+              <input
+                class="w-full bg-[#050505] border border-white/10 p-4 text-sm focus:ring-1 focus:ring-[#c2a358] focus:border-[#c2a358] transition-colors text-white placeholder-transparent"
+                id="name" type="text" />
+            </div>
+            <div class="space-y-3">
+              <label class="block text-[10px] uppercase tracking-[0.1em] text-slate-400 font-medium" for="email"
+                data-i18n="ct_email">Email</label>
+              <input
+                class="w-full bg-[#050505] border border-white/10 p-4 text-sm focus:ring-1 focus:ring-[#c2a358] focus:border-[#c2a358] transition-colors text-white placeholder-transparent"
+                id="email" type="email" />
+            </div>
+          </div>
+
+          <div class="space-y-3">
+            <label class="block text-[10px] uppercase tracking-[0.1em] text-slate-400 font-medium" for="phone"
+              data-i18n="ct_phone">Phone /
+              WhatsApp</label>
+            <input
+              class="w-full bg-[#050505] border border-white/10 p-4 text-sm focus:ring-1 focus:ring-[#c2a358] focus:border-[#c2a358] transition-colors text-white placeholder-transparent"
+              id="phone" type="text" />
+          </div>
+
+          <div class="space-y-3">
+            <label class="block text-[10px] uppercase tracking-[0.1em] text-slate-400 font-medium" for="message"
+              data-i18n="ct_msg">Message</label>
+            <textarea
+              class="w-full bg-[#050505] border border-white/10 p-4 text-sm focus:ring-1 focus:ring-[#c2a358] focus:border-[#c2a358] transition-colors text-white min-h-[160px] resize-y placeholder-transparent"
+              id="message"></textarea>
+          </div>
+
+          <div class="space-y-4 pt-2 pb-6">
+            <label class="block text-[10px] uppercase tracking-[0.1em] text-slate-400 font-medium"
+              data-i18n="ct_pref">Preferred Contact
+              Method</label>
+            <div class="flex flex-col sm:flex-row gap-6">
+              <label class="flex items-center gap-3 cursor-pointer group">
+                <input type="radio" name="contact-method"
+                  class="form-radio text-[#c2a358] bg-transparent border-white/20 focus:ring-[#c2a358] focus:ring-offset-0 w-4 h-4"
+                  checked>
+                <span class="text-sm text-slate-400 group-hover:text-white transition-colors">Email</span>
+              </label>
+              <label class="flex items-center gap-3 cursor-pointer group">
+                <input type="radio" name="contact-method"
+                  class="form-radio text-[#c2a358] bg-transparent border-white/20 focus:ring-[#c2a358] focus:ring-offset-0 w-4 h-4">
+                <span class="text-sm text-slate-400 group-hover:text-white transition-colors">WhatsApp</span>
+              </label>
+              <label class="flex items-center gap-3 cursor-pointer group">
+                <input type="radio" name="contact-method"
+                  class="form-radio text-[#c2a358] bg-transparent border-white/20 focus:ring-[#c2a358] focus:ring-offset-0 w-4 h-4">
+                <span class="text-sm text-slate-400 group-hover:text-white transition-colors">Phone</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="pt-4">
+            <button
+              class="w-full bg-[#c2a358] hover:bg-[#d4b465] text-black font-medium py-4 text-[12px] uppercase tracking-[0.15em] transition-colors"
+              type="submit" data-i18n="ct_submit">
+              Send Secure Inquiry
+            </button>
+            <p class="text-center text-slate-500 text-xs mt-6 flex items-center justify-center gap-2"
+              data-i18n="ct_enc">
+              <span class="material-symbols-outlined text-[16px] text-[#c2a358]">lock</span> Encrypted and confidential.
+            </p>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="relative bg-black pt-24 pb-12 overflow-hidden border-t border-white/5">
+
+    <!-- Single Mercedes background image -->
+    <div class="absolute left-0 top-0 w-1/3 h-full mix-blend-screen opacity-10 pointer-events-none"
+      style="background-image: url('Images/image-28.jpg'); background-size: cover; background-position: center; filter: grayscale(100%);">
+    </div>
+
+    <div
+      class="max-w-[1400px] mx-auto px-4 md:px-6 relative z-10 grid grid-cols-1 md:grid-cols-12 gap-16 md:gap-8 mb-20">
+
+      <div class="md:col-span-5 flex flex-col">
+        <h1 class="serif-title text-3xl font-light tracking-[0.25em] uppercase text-white mb-6">SECUREDRIVE</h1>
+        <p class="text-[10px] uppercase tracking-[0.3em] text-slate-500 max-w-xs leading-relaxed" data-i18n="ft_desc">
+          Armored Transportation &amp; Executive Protection &middot; Dubai, UAE
+        </p>
+      </div>
+
+      <div class="md:col-span-3 flex gap-12 text-left">
+        <div class="flex flex-col gap-4">
+          <h4 class="text-[9px] uppercase tracking-[0.3em] text-white" data-i18n="ft_nav">Navigation</h4>
+          <a href="#services"
+            class="text-xs font-light text-slate-500 hover:text-primary transition-colors">Services</a>
+          <a href="#fleet" class="text-xs font-light text-slate-500 hover:text-primary transition-colors">Fleet</a>
+          <a href="#contact" class="text-xs font-light text-slate-500 hover:text-primary transition-colors">Contact</a>
+        </div>
+      </div>
+
+      <div class="md:col-span-4 flex flex-col gap-4 text-left">
+        <h4 class="text-[9px] uppercase tracking-[0.3em] text-white" data-i18n="ft_ops">Operations</h4>
+        <a href="#" class="text-xs font-light text-slate-500 hover:text-primary transition-colors">Dubai, UAE HQ</a>
+        <a href="#" class="text-xs font-light text-slate-500 hover:text-primary transition-colors">Abu Dhabi</a>
+        <a href="#" class="text-xs font-light text-slate-500 hover:text-primary transition-colors">GCC Coverage</a>
+      </div>
+
+    </div>
+
+    <div
+      class="max-w-[1400px] mx-auto px-4 md:px-6 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center relative z-10 gap-6">
+      <p class="text-[9px] uppercase tracking-[0.3em] text-slate-600" data-i18n="ft_copy">
+        &copy; 2026 SECUREDRIVE &middot; All Rights Reserved.
+      </p>
+      <div class="flex gap-8">
+        <a href="#"
+          class="text-[9px] uppercase tracking-[0.3em] text-slate-600 hover:text-primary transition-colors">Privacy</a>
+        <a href="#"
+          class="text-[9px] uppercase tracking-[0.3em] text-slate-600 hover:text-primary transition-colors">Terms</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Fixed Language Switcher - Bottom Left -->
+  <div class="lang-fab" id="langFab">
+    <div class="lang-fab-menu">
+      <div class="lang-opt active" onclick="switchLang('en')" data-lang="en">EN &middot; English</div>
+      <div class="lang-opt" onclick="switchLang('de')" data-lang="de">DE &middot; Deutsch</div>
+      <div class="lang-opt" onclick="switchLang('ar')" data-lang="ar">AR &middot; العربية</div>
+      <div class="lang-opt" onclick="switchLang('ru')" data-lang="ru">RU &middot; Русский</div>
+    </div>
+    <button onclick="document.getElementById('langFab').classList.toggle('open')"
+      class="w-12 h-12 flex items-center justify-center bg-[#111] border border-white/10 text-white text-[10px] font-bold uppercase tracking-wider hover:border-primary/50 transition-all shadow-lg shadow-black/50"
+      id="langBtn">
+      EN
+    </button>
+  </div>
+
+  <!-- Fixed WhatsApp Button - Bottom Right -->
+  <a href="https://wa.me/971000000000" target="_blank" rel="noopener"
+    class="fixed bottom-6 right-6 z-[999] w-14 h-14 flex items-center justify-center bg-[#25D366] hover:bg-[#20bd5a] transition-all shadow-lg shadow-black/50 group">
+    <svg class="w-7 h-7 fill-white" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path
+        d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+    </svg>
+  </a>
+
+  <!-- Fixed Telegram Button - Bottom Right (above WhatsApp) -->
+  <a href="https://t.me/yourusername" target="_blank" rel="noopener"
+    class="fixed bottom-[88px] right-6 z-[999] w-14 h-14 flex items-center justify-center bg-[#2AABEE] hover:bg-[#229ED9] transition-all shadow-lg shadow-black/50 group">
+    <svg class="w-6 h-6 fill-white" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path
+        d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.892-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z" />
+    </svg>
+  </a>
+
+  <script>
+    // Auto-scroll logic for mobile services section
+    document.addEventListener("DOMContentLoaded", () => 
+      const scrollContainer = document.getElementById("services-scroll");
+      if (!scrollContainer) return;
+
+      let isHovering = false;
+      let isTouching = false;
+      let scrollAmount = 0.5; // pixels per frame
+
+      function autoScroll() {
+        if (window.innerWidth < 768  && !isHovering && !isTouching) {
+          scrollContainer.scrollLeft += scrollAmount;
+          
+          if (scrollContainer.scrollLeft >= (scrollContainer.scrollWidth - scrollContainer.clientWidth)) {
+            setTimeout(() => {
+              scrollContainer.scrollTo({ left: 0, behavior: 'smooth' });
+            }, 1000);
+          }
+        }
+        requestAnimationFrame(autcro    }
+
+      scrollContainer.addEventListener('mouseenter', () => isHovering = true);
+      scrollContainer.addEventListener('mouseleave', () => isHovering = false);
+      scrollContainer.addEventListener('touchstart', () => isTouching = true, {passive: true});
+      scrollContainer.addEventListener('touchend', () => { setTimeout(() => isTouching = false, 2000); }, {passive: true});
+
+      requestAnimationFrame(autoScroll);
+    });
+    // Language system
+    const langLabels = { en: "EN", de: "DE", ar: "AR", ru: "RU" };
+    let currentLang = localStorage.getItem("lang") || "en";
+
+    const T = {
+      en: {
+        nav_services: "Services", nav_fleet: "Our Fleet", nav_contact: "Contact", nav_cta: "Initiate Contact",
+        hero_tag: "Dubai · Armored · Elite", hero_title_1: "Protection", hero_title_2: "in Motion.",
+        hero_desc: "Military-grade security for diplomats, executives, and high-profile individuals across the Emirates. The only provider of armored public transfer vehicles in the region.",
+        hs1: "Armored VIP Transfers", hs2: "Airport Transfers", hs3: "Business Travel",
+        hs4: "Event & Conference", hs5: "Individual Route Planning", hs6: "Document & Asset Transport",
+        hero_btn1: "Initiate Contact", hero_btn2: "View Fleet",
+        sec_title: "Strategic Capabilities", sec_sub: "Tactical & Diplomatic Protocols",
+        p01: "Protocol 01", p02: "Protocol 02", p03: "Protocol 03", p04: "Protocol 04", p05: "Protocol 05", p06: "Protocol 06",
+        s1t: "Armored VIP Transfers", s1d: "Secure point-to-point transit in ballistic-protected luxury sedans and SUVs, ensuring absolute sterile travel environments.",
+        s2t: "High-Stakes Business Travel", s2d: "Armed escort and secure transport for corporate engagements requiring heightened risk mitigation.",
+        s3t: "Diplomatic Protection", s3d: "Embassy-compliant transport matching international standards for delegations, royals, and governmental officials.",
+        s4t: "Event Logistics", s4d: "Coordinated arrival and extraction strategies for high-profile public and private events, integrating counter-surveillance.",
+        s5t: "Tarmac Concierge", s5d: "Private aviation terminal assistance allowing immediate, secure transition from air to heavily armored road assets.",
+        s6t: "Long-term Lease", s6d: "Dedicated armored assets with professional Close Protection chauffeur details retained for extended residency.",
+        fl_badge: "Level 7 / VR9 Armor Configuration",
+        fl_h1: "Inconspicuous", fl_h2: "Fortresses.",
+        fl_desc: "Our fleet is engineered by leading ballistic specialists in Germany and the UAE to withstand extreme threats while attracting zero attention. We pair 360-degree overlap armoring with immaculate luxury styling.",
+        fl_lineup_tag: "Our Fleet", fl_lineup_title: "Armored Mercedes-Benz S-Class Fleet",
+        fl_lineup_desc: "Multiple ballistic-certified vehicles with blue-light authorization, ready for immediate deployment across the Emirates.",
+        fl_single_tag: "Flagship Guard", fl_single_title: "Mercedes-Benz S600 Guard", fl_single_sub: "VR9 certified · Tactical escort ready",
+        fl_int: "Bespoke Interior", fl_tac: "Tactical Command",
+        fl_stealth: "Stealth Ops", fl_stealth_sub: "Low Profile SUVs",
+        fl_glass: "Multi-layer Defense", fl_glass_sub: "Polycarbonate Glass",
+        fl_convoy: "Convoy Systems", fl_convoy_sub: "Escort Formations",
+        vh_title: "The Vehicle", vh_desc: "Our armored fleet meets the highest international protection standards. Every vehicle is engineered for maximum safety without compromising on luxury or discretion.",
+        vh1t: "Security Standards", vh1d: "VR9 / B7 ballistic protection. Tested and certified against military-grade threats including explosives and armor-piercing ammunition.",
+        vh2t: "Comfort Features", vh2d: "Exclusive Nappa leather interior, climate-controlled rear cabin, noise-dampened passenger compartment, and executive workspace amenities.",
+        vh3t: "Maintenance", vh3d: "Rigorous maintenance protocols with certified specialists. Every vehicle is inspected before and after each deployment to guarantee operational readiness.",
+        vh4t: "Discretion & Technology", vh4d: "Self-sealing fuel tank, fresh-air filtration system, run-flat tires, GPS jamming countermeasures, and encrypted communication systems.",
+        tm_title: "Our Team",
+        tm1t: "Elite Personnel", tm1d: "All operators are former elite military and special forces with extensive background verification and security clearance.",
+        tm2t: "Defensive Driving Training", tm2d: "Continuous advanced training in evasive maneuvers, threat response, and high-speed protective driving techniques.",
+        tm3t: "Licensed Security Partners", tm3d: "Strategic cooperation with certified security firms across the UAE and the wider GCC region for comprehensive protection coverage.",
+        ws_title: "Who We Serve",
+        ws_desc: "SecureDrive is the only provider in the region offering armored vehicles for public transfer. With years of experience in this exclusive segment, we set the standard for discreet, high-security transportation.",
+        ws1: "Diplomats", ws1d: "Embassy & governmental delegations",
+        ws2: "Executives", ws2d: "C-suite & corporate leadership",
+        ws3: "Business Travelers", ws3d: "High-profile international engagements",
+        ws4: "Public Figures", ws4d: "VIPs requiring absolute discretion",
+        ws_comp: "International Compliance", ws_comp_d: "All operations adhere to international security standards and UAE federal regulations for armored transport and executive protection.",
+        ct_title: "Initiate Secure Contact",
+        ct_name: "Name", ct_email: "Email", ct_phone: "Phone / WhatsApp", ct_msg: "Message",
+        ct_pref: "Preferred Contact Method", ct_submit: "Send Secure Inquiry", ct_enc: "Encrypted and confidential.",
+        ft_desc: "Armored Transportation & Executive Protection · Dubai, UAE",
+        ft_nav: "Navigation", ft_ops: "Operations", ft_copy: "© 2026 SECUREDRIVE · All Rights Reserved."
+      },
+      de: {
+        nav_services: "Leistungen", nav_fleet: "Flotte", nav_contact: "Kontakt", nav_cta: "Kontakt aufnehmen",
+        hero_tag: "Dubai · Gepanzert · Elite", hero_title_1: "Schutz", hero_title_2: "in Bewegung.",
+        hero_desc: "Sicherheit auf militärischem Niveau für Diplomaten, Führungskräfte und hochrangige Persönlichkeiten in den Emiraten. Der einzige Anbieter gepanzerter Transferfahrzeuge in der Region.",
+        hs1: "Gepanzerte VIP-Transfers", hs2: "Flughafentransfers", hs3: "Geschäftsreisen",
+        hs4: "Event & Konferenz", hs5: "Individuelle Routenplanung", hs6: "Dokumenten- & Werttransport",
+        hero_btn1: "Kontakt aufnehmen", hero_btn2: "Flotte ansehen",
+        sec_title: "Strategische Lösungen", sec_sub: "Taktische & diplomatische Protokolle",
+        p01: "Protokoll 01", p02: "Protokoll 02", p03: "Protokoll 03", p04: "Protokoll 04", p05: "Protokoll 05", p06: "Protokoll 06",
+        s1t: "Gepanzerte VIP-Transfers", s1d: "Sicherer Punkt-zu-Punkt-Transport in ballistisch geschützten Luxuslimousinen und SUVs.",
+        s2t: "Geschäftsreisen", s2d: "Bewaffnete Eskorte und sicherer Transport für hochkarätige Unternehmenseinsätze.",
+        s3t: "Diplomatenschutz", s3d: "Protokollkonformer Transport für internationale Delegationen und Regierungsbeamte.",
+        s4t: "Event-Logistik", s4d: "Koordinierte Ankunfts- und Extraktionsstrategien für hochrangige öffentliche Veranstaltungen.",
+        s5t: "Flughafen-Concierge", s5d: "VIP-Terminal-Betreuung und sofortiger sicherer Übergang vom Flug zum gepanzerten Fahrzeug.",
+        s6t: "Langzeitmiete", s6d: "Dedizierte gepanzerte Fahrzeuge mit professionellen Chauffeuren für längere Aufenthalte.",
+        fl_badge: "Stufe 7 / VR9 Panzerungskonfiguration",
+        fl_h1: "Unauffällige", fl_h2: "Festungen.",
+        fl_desc: "Unsere Flotte wird von führenden Ballistikspezialisten in Deutschland und den VAE gebaut, um extremen Bedrohungen standzuhalten — bei null Aufmerksamkeit.",
+        fl_lineup_tag: "Unsere Flotte", fl_lineup_title: "Gepanzerte Mercedes-Benz S-Klasse Flotte",
+        fl_lineup_desc: "Mehrere ballistisch zertifizierte Fahrzeuge mit Blaulicht-Berechtigung, sofort einsatzbereit in den Emiraten.",
+        fl_single_tag: "Flaggschiff", fl_single_title: "Mercedes-Benz S600 Guard", fl_single_sub: "VR9 zertifiziert · Taktisch einsatzbereit",
+        fl_int: "Exklusives Interieur", fl_tac: "Taktische Kommandozentrale",
+        fl_stealth: "Stealth Ops", fl_stealth_sub: "Unauffällige SUVs",
+        fl_glass: "Mehrschichtiger Schutz", fl_glass_sub: "Polycarbonatglas",
+        fl_convoy: "Konvoi-Systeme", fl_convoy_sub: "Eskortenformationen",
+        vh_title: "Das Fahrzeug", vh_desc: "Unsere gepanzerte Flotte erfüllt höchste internationale Schutzstandards. Jedes Fahrzeug ist für maximale Sicherheit bei vollem Luxus konstruiert.",
+        vh1t: "Sicherheitsstandards", vh1d: "VR9 / B7 ballistischer Schutz. Getestet und zertifiziert gegen militärische Bedrohungen.",
+        vh2t: "Komfortausstattung", vh2d: "Exklusives Nappaleder-Interieur, klimatisierter Fond, schallisolierter Fahrgastraum und Executive-Arbeitsplatz.",
+        vh3t: "Wartung", vh3d: "Strenge Wartungsprotokolle mit zertifizierten Spezialisten. Jedes Fahrzeug wird vor und nach jedem Einsatz geprüft.",
+        vh4t: "Diskretion & Technik", vh4d: "Selbstdichtender Tank, Frischluftfilterung, Runflat-Reifen, GPS-Schutzmaßnahmen und verschlüsselte Kommunikation.",
+        tm_title: "Unser Team",
+        tm1t: "Elitepersonal", tm1d: "Alle Operatoren sind ehemalige Elite-Militär- und Spezialeinheiten mit umfassender Sicherheitsüberprüfung.",
+        tm2t: "Defensives Fahrtraining", tm2d: "Kontinuierliches Fortgeschrittenentraining in Ausweichmanövern und taktischer Reaktion.",
+        tm3t: "Lizenzierte Sicherheitspartner", tm3d: "Strategische Kooperation mit zertifizierten Sicherheitsfirmen in der gesamten VAE und GCC-Region.",
+        ws_title: "Unsere Klientel",
+        ws_desc: "SecureDrive ist der einzige Anbieter in der Region mit gepanzerten Fahrzeugen für den öffentlichen Transfer. Mit jahrelanger Erfahrung setzen wir den Standard.",
+        ws1: "Diplomaten", ws1d: "Botschafts- & Regierungsdelegationen",
+        ws2: "Führungskräfte", ws2d: "C-Level & Unternehmensleitung",
+        ws3: "Geschäftsreisende", ws3d: "Hochrangige internationale Engagements",
+        ws4: "Persönlichkeiten", ws4d: "VIPs mit höchstem Diskretionsbedarf",
+        ws_comp: "Internationale Compliance", ws_comp_d: "Alle Einsätze entsprechen internationalen Sicherheitsstandards und den Bundesvorschriften der VAE.",
+        ct_title: "Sicheren Kontakt aufnehmen",
+        ct_name: "Name", ct_email: "E-Mail", ct_phone: "Telefon / WhatsApp", ct_msg: "Nachricht",
+        ct_pref: "Bevorzugte Kontaktmethode", ct_submit: "Sichere Anfrage senden", ct_enc: "Verschlüsselt und vertraulich.",
+        ft_desc: "Gepanzerter Transport & Personenschutz · Dubai, VAE",
+        ft_nav: "Navigation", ft_ops: "Standorte", ft_copy: "© 2026 SECUREDRIVE · Alle Rechte vorbehalten."
+      },
+      ar: {
+        nav_services: "الخدمات", nav_fleet: "الأسطول", nav_contact: "اتصل بنا", nav_cta: "تواصل معنا",
+        hero_tag: "دبي · مدرّع · نخبة", hero_title_1: "حماية", hero_title_2: "في حركة.",
+        hero_desc: "أمن بمعايير عسكرية للدبلوماسيين والمسؤولين التنفيذيين والشخصيات البارزة في الإمارات. المزوّد الوحيد لمركبات النقل المدرّعة العامة في المنطقة.",
+        hs1: "نقل VIP مدرّع", hs2: "نقل المطار", hs3: "سفر الأعمال",
+        hs4: "فعاليات ومؤتمرات", hs5: "تخطيط مسارات فردية", hs6: "نقل الوثائق والأصول",
+        hero_btn1: "تواصل معنا", hero_btn2: "عرض الأسطول",
+        sec_title: "قدرات استراتيجية", sec_sub: "بروتوكولات تكتيكية ودبلوماسية",
+        p01: "بروتوكول 01", p02: "بروتوكول 02", p03: "بروتوكول 03", p04: "بروتوكول 04", p05: "بروتوكول 05", p06: "بروتوكول 06",
+        s1t: "نقل VIP مدرّع", s1d: "نقل آمن من نقطة إلى نقطة في سيارات سيدان ودفع رباعي فاخرة محمية بالستياً.",
+        s2t: "سفر أعمال عالي المخاطر", s2d: "مرافقة مسلحة ونقل آمن للمشاركات التجارية عالية المخاطر.",
+        s3t: "الحماية الدبلوماسية", s3d: "نقل متوافق مع البروتوكول للوفود الدولية والمسؤولين الحكوميين.",
+        s4t: "لوجستيات الفعاليات", s4d: "استراتيجيات وصول واستخراج منسقة للفعاليات العامة رفيعة المستوى.",
+        s5t: "كونسيرج المطار", s5d: "مساعدة في صالة كبار الشخصيات وانتقال آمن فوري من الجو إلى الطريق.",
+        s6t: "إيجار طويل الأمد", s6d: "أصول مدرّعة مخصصة مع سائقين محترفين للإقامة الممتدة.",
+        fl_badge: "تكوين الدروع المستوى 7 / VR9",
+        fl_h1: "حصون", fl_h2: "غير ملفتة.",
+        fl_desc: "أسطولنا مصمم من قبل أبرز متخصصي الباليستيك في ألمانيا والإمارات لمقاومة التهديدات القصوى دون لفت الانتباه.",
+        fl_lineup_tag: "أسطولنا", fl_lineup_title: "أسطول مرسيدس بنز S-Class المدرّع",
+        fl_lineup_desc: "مركبات متعددة معتمدة بالستياً مع ترخيص ضوء أزرق، جاهزة للنشر الفوري في الإمارات.",
+        fl_single_tag: "الرائد", fl_single_title: "Mercedes-Benz S600 Guard", fl_single_sub: "معتمد VR9 · جاهز للمرافقة التكتيكية",
+        fl_int: "تصميم داخلي حصري", fl_tac: "قيادة تكتيكية",
+        fl_stealth: "عمليات خفية", fl_stealth_sub: "سيارات دفع رباعي منخفضة الملف",
+        fl_glass: "دفاع متعدد الطبقات", fl_glass_sub: "زجاج بولي كربونات",
+        fl_convoy: "أنظمة القوافل", fl_convoy_sub: "تشكيلات المرافقة",
+        vh_title: "المركبة", vh_desc: "أسطولنا المدرّع يلبي أعلى معايير الحماية الدولية. كل مركبة مصممة لأقصى أمان دون المساس بالفخامة.",
+        vh1t: "معايير الأمان", vh1d: "حماية بالستية VR9 / B7. مختبرة ومعتمدة ضد التهديدات العسكرية.",
+        vh2t: "ميزات الراحة", vh2d: "جلد نابا حصري، مقصورة خلفية مكيفة، عزل صوتي، ومرافق عمل تنفيذية.",
+        vh3t: "الصيانة", vh3d: "بروتوكولات صيانة صارمة مع متخصصين معتمدين. فحص كل مركبة قبل وبعد كل مهمة.",
+        vh4t: "السرية والتقنية", vh4d: "خزان وقود ذاتي الإغلاق، نظام تنقية هواء، إطارات مقاومة للثقب، وأنظمة اتصال مشفرة.",
+        tm_title: "فريقنا",
+        tm1t: "أفراد النخبة", tm1d: "جميع المشغلين من القوات العسكرية والخاصة السابقة مع تحقق أمني شامل.",
+        tm2t: "تدريب القيادة الدفاعية", tm2d: "تدريب متقدم مستمر في المناورات والاستجابة للتهديدات.",
+        tm3t: "شركاء أمن مرخصون", tm3d: "تعاون استراتيجي مع شركات أمن معتمدة في الإمارات ومنطقة الخليج.",
+        ws_title: "من نخدم",
+        ws_desc: "SecureDrive هو المزوّد الوحيد في المنطقة الذي يقدم مركبات مدرّعة للنقل العام. نضع المعيار للنقل الآمن والسري.",
+        ws1: "الدبلوماسيون", ws1d: "وفود السفارات والحكومات",
+        ws2: "المسؤولون التنفيذيون", ws2d: "القيادة المؤسسية",
+        ws3: "رجال الأعمال", ws3d: "المشاركات الدولية رفيعة المستوى",
+        ws4: "الشخصيات العامة", ws4d: "كبار الشخصيات الذين يحتاجون سرية مطلقة",
+        ws_comp: "الامتثال الدولي", ws_comp_d: "جميع العمليات تتوافق مع معايير الأمن الدولية ولوائح الإمارات الاتحادية.",
+        ct_title: "ابدأ تواصلاً آمناً",
+        ct_name: "الاسم", ct_email: "البريد الإلكتروني", ct_phone: "الهاتف / واتساب", ct_msg: "الرسالة",
+        ct_pref: "طريقة الاتصال المفضلة", ct_submit: "إرسال استفسار آمن", ct_enc: "مشفر وسري.",
+        ft_desc: "نقل مدرّع وحماية تنفيذية · دبي، الإمارات",
+        ft_nav: "التنقل", ft_ops: "العمليات", ft_copy: "© 2026 SECUREDRIVE · جميع الحقوق محفوظة."
+      },
+      ru: {
+        nav_services: "Услуги", nav_fleet: "Автопарк", nav_contact: "Контакт", nav_cta: "Связаться",
+        hero_tag: "Дубай · Бронированный · Элита", hero_title_1: "Защита", hero_title_2: "в движении.",
+        hero_desc: "Безопасность военного класса для дипломатов, руководителей и VIP-персон в Эмиратах. Единственный поставщик бронированных транспортных средств для публичного трансфера в регионе.",
+        hs1: "Бронированные VIP-трансферы", hs2: "Трансферы в аэропорт", hs3: "Деловые поездки",
+        hs4: "Мероприятия и конференции", hs5: "Индивидуальное планирование", hs6: "Перевозка документов",
+        hero_btn1: "Связаться", hero_btn2: "Смотреть автопарк",
+        sec_title: "Стратегические возможности", sec_sub: "Тактические и дипломатические протоколы",
+        p01: "Протокол 01", p02: "Протокол 02", p03: "Протокол 03", p04: "Протокол 04", p05: "Протокол 05", p06: "Протокол 06",
+        s1t: "Бронированные VIP-трансферы", s1d: "Безопасная перевозка в баллистически защищённых люксовых седанах и внедорожниках.",
+        s2t: "Деловые поездки", s2d: "Вооружённый эскорт и безопасный транспорт для корпоративных мероприятий.",
+        s3t: "Дипломатическая защита", s3d: "Транспорт, соответствующий протоколу, для международных делегаций и официальных лиц.",
+        s4t: "Логистика мероприятий", s4d: "Скоординированные стратегии прибытия и эвакуации для публичных мероприятий высокого уровня.",
+        s5t: "Консьерж аэропорта", s5d: "VIP-обслуживание в терминале и немедленный безопасный переход с воздуха на дорогу.",
+        s6t: "Долгосрочная аренда", s6d: "Выделенные бронированные автомобили с профессиональными водителями для длительного пребывания.",
+        fl_badge: "Конфигурация брони Уровень 7 / VR9",
+        fl_h1: "Незаметные", fl_h2: "Крепости.",
+        fl_desc: "Наш автопарк создан ведущими баллистическими специалистами Германии и ОАЭ для противостояния экстремальным угрозам при нулевом внимании.",
+        fl_lineup_tag: "Наш автопарк", fl_lineup_title: "Бронированный автопарк Mercedes-Benz S-Class",
+        fl_lineup_desc: "Несколько баллистически сертифицированных автомобилей с разрешением на проблесковые маячки, готовых к немедленному развёртыванию.",
+        fl_single_tag: "Флагман", fl_single_title: "Mercedes-Benz S600 Guard", fl_single_sub: "Сертификат VR9 · Тактическое сопровождение",
+        fl_int: "Эксклюзивный интерьер", fl_tac: "Тактическое командование",
+        fl_stealth: "Скрытные операции", fl_stealth_sub: "Незаметные внедорожники",
+        fl_glass: "Многослойная защита", fl_glass_sub: "Поликарбонатное стекло",
+        fl_convoy: "Системы конвоев", fl_convoy_sub: "Формации эскорта",
+        vh_title: "Автомобиль", vh_desc: "Наш бронированный автопарк соответствует высочайшим международным стандартам защиты без компромиссов в роскоши.",
+        vh1t: "Стандарты безопасности", vh1d: "Баллистическая защита VR9 / B7. Испытано и сертифицировано против военных угроз.",
+        vh2t: "Комфорт", vh2d: "Эксклюзивная кожа Nappa, климат-контроль, шумоизоляция и рабочее пространство руководителя.",
+        vh3t: "Обслуживание", vh3d: "Строгие протоколы обслуживания. Каждый автомобиль проверяется до и после каждого развёртывания.",
+        vh4t: "Конфиденциальность и технологии", vh4d: "Самогерметизирующийся бак, система фильтрации воздуха, шины Run-Flat и шифрованная связь.",
+        tm_title: "Наша команда",
+        tm1t: "Элитный персонал", tm1d: "Все операторы — бывшие элитные военные и спецназовцы с тщательной проверкой.",
+        tm2t: "Оборонительное вождение", tm2d: "Непрерывное обучение уклонению, реагированию на угрозы и высокоскоростному вождению.",
+        tm3t: "Лицензированные партнёры", tm3d: "Стратегическое сотрудничество с сертифицированными охранными фирмами в ОАЭ и регионе.",
+        ws_title: "Кого мы обслуживаем",
+        ws_desc: "SecureDrive — единственный поставщик в регионе, предлагающий бронированные автомобили для публичного трансфера. Мы устанавливаем стандарт.",
+        ws1: "Дипломаты", ws1d: "Посольства и правительственные делегации",
+        ws2: "Руководители", ws2d: "Топ-менеджмент и корпоративное руководство",
+        ws3: "Бизнес-путешественники", ws3d: "Международные деловые мероприятия",
+        ws4: "Публичные фигуры", ws4d: "VIP-персоны, требующие абсолютной конфиденциальности",
+        ws_comp: "Международное соответствие", ws_comp_d: "Все операции соответствуют международным стандартам безопасности и федеральным нормам ОАЭ.",
+        ct_title: "Инициировать безопасный контакт",
+        ct_name: "Имя", ct_email: "Email", ct_phone: "Телефон / WhatsApp", ct_msg: "Сообщение",
+        ct_pref: "Предпочтительный способ связи", ct_submit: "Отправить защищённый запрос", ct_enc: "Зашифровано и конфиденциально.",
+        ft_desc: "Бронированный транспорт и защита · Дубай, ОАЭ",
+        ft_nav: "Навигация", ft_ops: "Операции", ft_copy: "© 2026 SECUREDRIVE · Все права защищены."
+      }
+    };
+
+    function switchLang(lang) {
+      currentLang = lang;
+      localStorage.setItem("lang", lang);
+      document.getElementById("langBtn").textContent = langLabels[lang];
+      document.querySelectorAll(".lang-opt").forEach(o => o.classList.toggle("active", o.dataset.lang === lang));
+      document.getElementById("langFab").classList.remove("open");
+      if (lang === "ar") {
+        document.documentElement.setAttribute("dir", "rtl");
+      } else {
+        document.documentElement.removeAttribute("dir");
+      }
+      document.documentElement.setAttribute("lang", lang);
+      // Apply translations
+      const t = T[lang];
+      if (!t) return;
+      document.querySelectorAll("[data-i18n]").forEach(el => {
+        const key = el.getAttribute("data-i18n");
+        if (t[key]) el.textContent = t[key];
+      });
+      document.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
+        const key = el.getAttribute("data-i18n-placeholder");
+        if (t[key]) el.placeholder = t[key];
+      });
+    }
+
+    // Init language
+    switchLang(currentLang);
+
+    // Close lang menu on outside click
+    document.addEventListener("click", function(e) {
+      const fab = document.getElementById("langFab");
+      if (!fab.contains(e.target)) fab.classList.remove("open");
+    });
+
+    // Reveal animation logic
+    function reveal() {
+      var reveals = document.querySelectorAll(".reveal");
+      for (var i = 0; i < reveals.length; i++) {
+        var windowHeight = window.innerHeight;
+        var elementTop = reveals[i].getBoundingClientRect().top;
+        var elementVisible = 50;
+        if (elementTop < windowHeight - elementVisible) {
+          reveals[i].classList.add("active");
+        }
+      }
+    }
+    window.addEventListener("scroll", reveal);
+    setTimeout(reveal, 300);
+
+    // Dynamic Navbar Glassmorphism
+    window.addEventListener('scroll', function () {
+      var navbar = document.getElementById('navbar');
+      if (window.scrollY > 80) {
+        navbar.classList.add('glassmorphism', 'py-3');
+        navbar.classList.remove('bg-transparent', 'py-4', 'border-white/5');
+      } else {
+        navbar.classList.add('bg-transparent', 'py-4', 'border-white/5');
+        navbar.classList.remove('glassmorphism', 'py-3');
+      }
+    });
+  </script>
+</body>
+
+</html>
